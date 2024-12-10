@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Prediction</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .prediction-form {
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #result {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather Prediction</h1>
+
+    <div class="prediction-form">
+        <h2>Direct Date Prediction</h2>
+        <form id="direct-form">
+            <input type="date" id="direct-date" required>
+            <button type="submit">Predict Direct</button>
+        </form>
+    </div>
+
+    <div class="prediction-form">
+        <h2>Weekly Average Prediction</h2>
+        <form id="weekly-form">
+            <input type="date" id="weekly-date" required>
+            <button type="submit">Predict Weekly Average</button>
+        </form>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('direct-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const date = document.getElementById('direct-date').value;
+            
+            try {
+                const response = await fetch('/predict_direct', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `date=${date}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    document.getElementById('result').innerHTML = `Error: ${data.error}`;
+                } else {
+                    document.getElementById('result').innerHTML = `
+                        <h3>Direct Prediction for ${data.date}</h3>
+                        <p>Rain: ${data.prediction.rain} mm</p>
+                        <p>Max Temperature: ${data.prediction.temp_max}°C</p>
+                        <p>Min Temperature: ${data.prediction.temp_min}°C</p>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `Error: ${error}`;
+            }
+        });
+
+        document.getElementById('weekly-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const date = document.getElementById('weekly-date').value;
+            
+            try {
+                const response = await fetch('/predict_weekly', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `date=${date}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    document.getElementById('result').innerHTML = `Error: ${data.error}`;
+                } else {
+                    document.getElementById('result').innerHTML = `
+                        <h3>Weekly Average Prediction for ${data.date}</h3>
+                        <p>Rain: ${data.prediction.rain} mm</p>
+                        <p>Max Temperature: ${data.prediction.temp_max}°C</p>
+                        <p>Min Temperature: ${data.prediction.temp_min}°C</p>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = `Error: ${error}`;
+            }
+        });
+    </script>
+</body>
+</html>
