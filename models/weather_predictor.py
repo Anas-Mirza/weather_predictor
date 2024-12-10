@@ -196,6 +196,7 @@ class WeatherPredictor:
         }
 
 # Example usage
+"""
 def main():
     # Replace with your actual CSV path
     predictor = WeatherPredictor('weather_data.csv')
@@ -222,3 +223,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+"""
